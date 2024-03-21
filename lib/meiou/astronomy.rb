@@ -56,6 +56,10 @@ module ASTRO
   def self.planets
     [:mercury,:venus,:mars,:vesta,:ceres,:jupiter,:saturn,:uranus,:neptune,:pluto]
   end
+  def self.init!
+    File.open("books/astronomy.txt",'w') { |f| f.write(ASTRO.to_s) }
+  end
+  
 end
 
 module Meiou
@@ -63,3 +67,5 @@ module Meiou
     ASTRO
   end
 end
+
+Meiou.init(:astro) { |h| ASTRO.init! }
