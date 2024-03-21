@@ -5,7 +5,17 @@ module WORD
   # find +word+.
   def self.term word
     ds, df = [], []
-    WordNet::Lemma.find_all(word).each { |e| ds << e.pos; e.synsets.each  { |ee| df << ee.gloss.gsub('"', "").gsub("--", " ").split("; ")[0] } }
+    WordNet::Lemma.find_all(word).each { |e|
+      ds << e.pos;
+      e.synsets.each  { |ee|
+        ee.expanded_hypernyms.each { |eee|
+          ee.gloss.gsub('"', "").gsub("--", " ").split("; ").each { |eeee|
+            df << eeee
+            df.uniq!
+          }
+        }
+      }
+    }
     #if ds.include?('n') && !ds.include?('v')                                                                                                                                                                                    
     if ds.length > 0
       return  { word: word, pos: ds, def: df }
@@ -28,6 +38,9 @@ end
 module Meiou
   def self.word
     WORD
+  end
+  def self.meaning(w, ww, &b)
+    WORD[w][:def].each { |e| if Regexp.new(ww).match(e); b.call(e); end }
   end
   def self.words
     WORD.keys

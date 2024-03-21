@@ -3,14 +3,19 @@ require 'tokenizer'
 module DICT
   # extract a list of tokens from +payload+ and handle with block passing +index+ and +WORD[word]+.
   def self.[] k
-    DICT.extract(k)
+    DICT.know(k, define: true, example: true )
   end
-
+  
   def self.know input, h={}
-    a = []   
-    DICT[input] { |w|
+    a = []
+    DICT.keywords(input).each { |e|
+      w = WORD[e]
       if h[:define] == true
-        a << %[#{w[:word].capitalize} means #{w[:def].sample}.];
+        if w[:def].length > 0
+          a << %[#{w[:word].capitalize} means #{w[:def].sample}.];
+        else
+          a << %[#{w[:word].capitalize} means #{w[:word]}.];
+        end
       end
       BOOK.word(w[:word]) { |r|
         if h[:cite] == true
@@ -25,13 +30,12 @@ module DICT
     return a
   end
   
-  def self.extract i, &b
+  def self.keywords input, &b
     a = []
-    Tokenizer::WhitespaceTokenizer.new().tokenize(i).each do |e|
+    Tokenizer::WhitespaceTokenizer.new().tokenize(input).each do |e|
       d = Meiou.word[e]
       if d != nil
-        if "#{e}".length > 2 && !/[[:punct:]]/.match(e) && !['the','and','but','this','that'].include?(e.downcase) && d != false
-          #puts %[Meiou | #{e} | #{d[:pos].sample} | #{d[:def].sample}] 
+        if "#{e}".length > 2 && !/[[:punct:]]/.match(e) && !['the','and','but','this','that'].include?(e.downcase) && d != false 
           if block_given?
             a << b.call(d)
           else
@@ -45,12 +49,14 @@ module DICT
 end
 
 module Meiou
-  def self.keywords k
-    DICT.know(k)
+  def self.extract k, &b
+    if block_given?
+      DICT.keywords(k) { |e| b.call(e) }
+    else
+      DICT.keywords(k)
+    end
   end
-  def self.extract k
-    DICT[k]
-  end
+
   def self.[] k
     DICT.know(k, define: true, example: true)
   end

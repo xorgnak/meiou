@@ -2,6 +2,10 @@
 
 require 'pstore'
 
+if !Dir.exist? 'db'
+  Dir.mkdir 'db'
+end
+
 module Meiou
   TRAMPSTAMP = '[MEIOU]'
   class Error < StandardError; end

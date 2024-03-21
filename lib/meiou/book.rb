@@ -12,7 +12,10 @@ module BOOK
     [ :tiny, :info, :short, :med, :long ]
   end
   def self.size? w
-    if w.length > BOOK.size[0] && w.length <= BOOK.size[1]
+    
+    if w.length < BOOK.size[0]
+      s = :ignore
+    elsif w.length > BOOK.size[0] && w.length <= BOOK.size[1]
       s = :tiny
     elsif w.length > BOOK.size[1] && w.length <= BOOK.size[2]
       s = :info
@@ -46,14 +49,16 @@ module BOOK
         if !/Project Gutenberg/.match(x)
           if !/^[[[:upper:]]|[[:blank:]]|[[:punct:]]|[[:digit:]]]*$/.match(x)
             s = BOOK.size?(x.split(/\s/))
-            @bin[s].transaction { |db| db[i] = x }
-            @ind.transaction { |db| db[i] = s }
-            @mod.transaction { |db| db[i] = MOOD[x] }
-            puts ":INFO"
-            Meiou.extract(x) { |e| @tag.transaction { |db| if !db.key?(e[:word]); db[e[:word]] = []; end; db[e[:word]] << i; } }
+            Meiou.log "compile load item", "[#{@id}][#{i}] #{s}"
+            if s != :ignore
+              @bin[s].transaction { |db| db[i] = x }
+              @ind.transaction { |db| db[i] = s }
+              @mod.transaction { |db| db[i] = MOOD[x] }
+              Meiou.extract(x) { |e| @tag.transaction { |db| if !db.key?(e[:word]); db[e[:word]] = []; end; db[e[:word]] << i; } }
+            end
           else
             if !/GUTENBERG/.match(x)
-              puts %[#{@id}>#{i}: #{x}]
+              Meiou.log "compile load section", %[#{@id}>#{i}: #{x}]
               @sec.transaction { |db| db[i] = x }
               @top.transaction { |db| db[x] = i }
             end
@@ -166,20 +171,20 @@ module BOOK
   def self.init!
     Dir['books/*'].each { |e|
       k = e.gsub("books/", "").gsub(".txt", "").gsub("_", " ");
-      puts %[Scanning #{k}...]
+      Meiou.log :init_scan, %[Scanning #{k}...]
       @@BOOK[k]
     }
-    puts %[Books scanned!]
+    Meiou.log :init_done, %[Books scanned!]
     return "DONE!"    
   end
   
   def self.compile!
     Dir['books/*'].each { |e|
       k = e.gsub("books/", "").gsub(".txt", "").gsub("_", " ");
-      puts %[Compiling #{k}...]
+      Meiou.log :compile_load, %[#{k}...]
       @@BOOK[k].load(e)
     }
-    puts %[Books compiled!]
+    Meiou.log :compile_done, %[done!]
     return "DONE!"
   end
 end
