@@ -40,4 +40,6 @@ require_relative "meiou/book"
 
 require_relative "meiou/mood"
 
+require_relative "meiou/tokipona"
+
 Meiou.init!

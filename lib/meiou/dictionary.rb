@@ -2,17 +2,8 @@ require 'tokenizer'
 
 module DICT
   # extract a list of tokens from +payload+ and handle with block passing +index+ and +WORD[word]+.
-  def self.[] payload, &block
-    Tokenizer::WhitespaceTokenizer.new().tokenize(payload).each do |e|
-      d = Meiou.word[e]
-      if d != nil
-        if "#{e}".length > 2 && !/[[:punct:]]/.match(e) && !['the','and','but','this','that'].include?(e.downcase) && d != false
-          #puts %[Meiou | #{e} | #{d[:pos].sample} | #{d[:def].sample}]
-          block.call(d)
-        end
-      end
-    end
-    return nil
+  def self.[] k
+    DICT.extract(k)
   end
 
   def self.know input, h={}
@@ -33,9 +24,33 @@ module DICT
     }
     return a
   end
+  
+  def self.extract i, &b
+    a = []
+    Tokenizer::WhitespaceTokenizer.new().tokenize(i).each do |e|
+      d = Meiou.word[e]
+      if d != nil
+        if "#{e}".length > 2 && !/[[:punct:]]/.match(e) && !['the','and','but','this','that'].include?(e.downcase) && d != false
+          #puts %[Meiou | #{e} | #{d[:pos].sample} | #{d[:def].sample}] 
+          if block_given?
+            a << b.call(d)
+          else
+            a << e
+          end
+        end
+      end
+    end
+    return a
+  end
 end
 
 module Meiou
+  def self.keywords k
+    DICT.know(k)
+  end
+  def self.extract k
+    DICT[k]
+  end
   def self.[] k
     DICT.know(k, define: true, example: true)
   end

@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rwordnet"
   spec.add_dependency "tokenizer"
   spec.add_dependency "textmood"
+  spec.add_dependency "tokipona"
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
 end
