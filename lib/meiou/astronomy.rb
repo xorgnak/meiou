@@ -153,7 +153,7 @@ module ZODIAC
         astro_sign = "sagittarius"; 
       end
     end
-    return astro_sign
+    return { sign: astro_sign, wiki: WIKIPEDIA["#{astro_sign.capitalize} (astrology)"] }
   end
   
 end
