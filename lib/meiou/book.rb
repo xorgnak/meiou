@@ -49,10 +49,8 @@ module BOOK
             @bin[s].transaction { |db| db[i] = x }
             @ind.transaction { |db| db[i] = s }
             @mod.transaction { |db| db[i] = MOOD[x] }
-#            if s == :info
-#              puts ":INFO"
-#              Meiou.extract(x) { |e| @tag.transaction { |db| if !db.key?(e[:word]); db[e[:word]] = []; end; db[e[:word]] << i; } }
-#            end
+            puts ":INFO"
+            Meiou.extract(x) { |e| @tag.transaction { |db| if !db.key?(e[:word]); db[e[:word]] = []; end; db[e[:word]] << i; } }
           else
             if !/GUTENBERG/.match(x)
               puts %[#{@id}>#{i}: #{x}]
