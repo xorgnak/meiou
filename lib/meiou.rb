@@ -36,6 +36,10 @@ require_relative "meiou/version"
 
 require_relative "meiou/wiki"
 
+require_relative "meiou/emoji"
+
+require_relative "meiou/astronomy"
+
 require_relative "meiou/dictionary"
 
 require_relative "meiou/word"

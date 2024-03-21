@@ -37,6 +37,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tokenizer"
   spec.add_dependency "textmood"
   spec.add_dependency "tokipona"
+  spec.add_dependency "astronomy"
+  spec.add_dependency "gemoji"
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
 end
