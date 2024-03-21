@@ -104,7 +104,11 @@ module BOOK
       @bin[s].transaction { |db| db.keys.map { |e| if Regexp.new(k).match(db[e]); a << e end } }
       return a
     end
-
+    def map &b
+      BOOK.sizes.each do |size|
+        @bin[size].transaction { |db| db.keys.map { |e| b.call(db[e]) } }
+      end
+    end
     def each k, &b
       @bin[k].transaction { |db| db.keys.map { |e| b.call(db[e]) } }
       return nil
@@ -168,6 +172,16 @@ module BOOK
     return nil
   end
 
+  def self.to_a
+    a = []
+    @@BOOK.each_pair { |k,v| v.map { |e| a << e }}
+    return a.compact
+  end
+
+  def self.to_s
+    BOOK.to_a.join("\n\n")
+  end
+
   def self.init!
     Dir['books/*'].each { |e|
       k = e.gsub("books/", "").gsub(".txt", "").gsub("_", " ");
@@ -187,6 +201,7 @@ module BOOK
     Meiou.log :compile_done, %[done!]
     return "DONE!"
   end
+ 
 end
 
 Meiou.compile(:book) { |h| BOOK.compile! }
