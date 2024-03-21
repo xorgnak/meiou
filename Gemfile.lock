@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    meiou (0.1.7)
+    meiou (0.1.8)
       astronomy
       gemoji
       pstore
