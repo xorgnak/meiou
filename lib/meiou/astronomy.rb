@@ -57,7 +57,7 @@ module ASTRO
     [:mercury,:venus,:mars,:vesta,:ceres,:jupiter,:saturn,:uranus,:neptune,:pluto]
   end
   def self.init!
-    File.open("books/astronomy.txt",'w') { |f| f.write(ASTRO.to_s) }
+    File.open("books/astronomy_fortune-tellers.txt",'w') { |f| f.write(ASTRO.to_s) }
   end
   
 end

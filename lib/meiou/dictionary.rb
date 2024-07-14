@@ -58,7 +58,7 @@ module Meiou
   end
 
   def self.[] k
-    DICT.know(k, define: true, example: true)
+    DICT.know(k, define: true, example: true).uniq
   end
   def self.define k
     DICT.know(k, define: true)
